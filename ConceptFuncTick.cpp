@@ -3,7 +3,8 @@
 #include <concepts>
 #include <type_traits>
 
-//Template functions support both overloading and specialization. Template classes only support specialization.
+//in C++ Template functions support both overloading and specialization. Template classes only support specialization.
+//So . you can’t have two templates with the same name but different constraints
 namespace rba
 {
     template<class T>
