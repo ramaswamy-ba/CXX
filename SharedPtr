@@ -1,0 +1,94 @@
+#include <stdio.h>
+#include <utility>
+#include <iostream>
+template<typename T>
+class SharedPtr
+{
+private:
+    mutable size_t *ref_count = nullptr;
+    T* data = nullptr;
+public:
+    SharedPtr() { ref_count = new size_t(1);  data = new T(); }
+    
+    SharedPtr( const SharedPtr<T> &obj) { ref_count = obj.ref_count;  ++(*ref_count); data = obj.data; }
+    
+    //template<typename... Args>
+    //SharedPtr(Args&&... args) { ref_count = new size_t(1); data = new T(std::forward<Args>(args)...); }
+    
+    SharedPtr(SharedPtr<T> &&obj) 
+    { 
+        if ( this == &obj)
+            return;
+            
+        ref_count =  obj.ref_count; obj.ref_count = nullptr;
+        data = obj.data; obj.data = nullptr;
+        
+        //obj.reset();
+    }
+    
+    ~SharedPtr()
+    {
+        if ( ref_count)
+        {
+            --(*ref_count);
+            if ( *ref_count == 0)
+            {
+                delete ref_count;
+                delete data;
+            }
+        }
+        else
+        {
+            std::cerr <<"already null\n";
+        }
+    }
+    //SharedPtr(SharedPtr<T> obj) ref_count(obj.ref_count +1 ) { data = obj.data; }
+};
+
+struct Test {
+
+   inline static int count = 0;
+   Test() {
+
+     ++count;
+     std::cout<<"Count "<<count <<'\n';
+
+   }
+
+   ~Test() {
+
+     --count;
+     std::cout<<"Count "<<count <<'\n';
+
+   }
+ };
+ 
+int main()
+{
+
+{
+
+     {
+
+       SharedPtr<Test> ptr1 ;
+
+       std::cout << Test::count << std::endl;
+
+       {
+
+         SharedPtr<Test> ptr2  = std::move(ptr1);
+
+         std::cout << Test::count << std::endl;
+
+       }
+
+       std::cout << Test::count << std::endl;
+
+     }
+
+     std::cout << Test::count << std::endl;
+
+   }
+    
+    return 0;
+}
