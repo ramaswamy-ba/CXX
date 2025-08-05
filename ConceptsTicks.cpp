@@ -31,6 +31,13 @@ namespace rba
     template <typename T>
     struct is_smart_ptr<T, std::enable_if_t<SmartPointerType<T>>> : std::true_type {};
 }
+
+//Check for member funtion to exist, which takes args and returns nothing.
+template<typename T>
+concept HasCallWithArgs = requires(T t, int x, double y) {
+    { t.call(x, y) } -> std::convertible_to<void>;
+};
+
 void test1()
 {
     std::cout << std::boolalpha;
