@@ -45,3 +45,52 @@ int main()
     TestTypeEraser();
 	return 0;
 }
+
+
+//New Version
+
+#include <iostream>
+#include <memory>
+#include <string>
+#include <vector>
+
+struct TypeEraser
+{
+    struct Concept
+    {
+        virtual std::string getName() const = 0;
+        virtual ~Concept() = default;
+    };
+    template <class T>
+    struct Model : public Concept
+    {
+        T data;
+        Model(T&& obj) : data(std::forward<T>(obj)) { }
+        std::string getName() const override { return data.getName(); } // every T type should have getName method implemented
+    };
+private:
+    std::shared_ptr<Concept> self;
+public:
+    template<class T>
+    TypeEraser(T&& obj) : self(std::make_shared<Model<T>>(std::forward<T>(obj))) { }
+    std::string getName() const { return self->getName(); }
+};
+
+struct Mango { std::string getName() const { return "Mango"; } };
+struct Apple { std::string getName() const { return "Apple"; } };
+
+void TestTypeEraser()
+{
+    std::vector<TypeEraser> fruits{TypeEraser(Mango()), TypeEraser(Apple())};
+    for (auto f : fruits)
+    {
+        std::cout << f.getName() << '\n';
+    }
+
+}
+int main()
+{
+        std::cout << "TypeEraser Demon\n";
+    TestTypeEraser();
+        return 0;
+}
