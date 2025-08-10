@@ -32,16 +32,16 @@ struct Apple { std::string getName() const { return "Apple"; } };
 
 void TestTypeEraser()
 {
-    std::vector<TypeEraser> vec{TypeEraser(Mango()), TypeEraser(Apple())};
-    for (auto v : vec)
+    std::vector<TypeEraser> fruits{TypeEraser(Mango()), TypeEraser(Apple())};
+    for (auto f : fruits)
     {
-        std::cout << v.getName() << '\n';
+        std::cout << f.getName() << '\n';
     }
 
 }
 int main()
 {
 	std::cout << "TypeEraser Demon";
-  TestTypeEraser();
+    TestTypeEraser();
 	return 0;
 }
